@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "graph.hpp"
-#include "entity.hpp"
 
 Graphic::Graphic(const char* title, const int& SCREEN_WIDTH, const int& SCREEN_HEIGHT)
     :window(nullptr), renderer(nullptr)
@@ -40,22 +39,9 @@ void Graphic::clear()
     SDL_RenderClear( renderer );
 }
 
-void Graphic::render( Entity& p_entity )
+void Graphic::render( SDL_Rect srcrect, SDL_Rect dstrect, SDL_Texture* tex )
 {
-    SDL_Rect srcrect = {
-        p_entity.getCurrentFrame().x,
-        p_entity.getCurrentFrame().y,
-        p_entity.getCurrentFrame().w,
-        p_entity.getCurrentFrame().h
-    };
-    SDL_Rect dstrect = {
-        p_entity.getPos().x,
-        p_entity.getPos().y,
-        p_entity.getCurrentFrame().w,
-        p_entity.getCurrentFrame().h
-    };
-
-    SDL_RenderCopy( renderer, p_entity.getTexture(), &srcrect, &dstrect );
+    SDL_RenderCopy( renderer, tex, &srcrect, &dstrect );
 }
 
 void Graphic::display()

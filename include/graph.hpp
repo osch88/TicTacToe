@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "entity.hpp"
 
 class Graphic
 {
@@ -12,7 +11,7 @@ public:
     SDL_Texture* loadTexture(const char* p_filePath);
     void cleanUp();                                     //Destroy window and renderer memory
     void clear();                                       //RenderClear
-    void render(Entity& p_entity);
+    void render( SDL_Rect srcrect, SDL_Rect dstrect, SDL_Texture* tex );
     void display();                                     //RenderPresent 
 private:
     SDL_Window* window;
