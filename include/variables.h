@@ -2,8 +2,8 @@
 #include <SDL2/SDL.h>
 
 // Window
-constexpr int SCREEN_WIDTH = 900;
-constexpr int SCREEN_HEIGHT = 900;
+constexpr int SCREEN_WIDTH = 600;
+constexpr int SCREEN_HEIGHT = 600;
 
 // Board
 constexpr int N = 3;

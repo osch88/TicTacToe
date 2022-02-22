@@ -13,20 +13,15 @@ struct Cell
 class Board
 {
 public:
-    std::array<std::array<cell_t, 3>, 3> table;
+    std::array<std::array<cell_t, N>, N> table;
     Board()
     {
-        for (size_t row = 0; row < N; row++)
+        for (int row = 0; row < N; row++)
         {
-            for (size_t col = 0; col < N; col++)
+            for (int col = 0; col < N; col++)
             {
                 int posX = CELL_WIDTH * row;
                 int posY = CELL_HEIGHT * col;
-/*                 table[row][col].player = 0;
-                table[row][col].rect->x = posX;
-                table[row][col].rect->y = posY;
-                table[row][col].rect->w = 100;
-                table[row][col].rect->h = 100; */
             }
         }
     }
@@ -44,6 +39,15 @@ public:
             {
                 solution = table[0][i].player;
             }
+        }
+        // Diagonal
+        if (table[0][2].player == table[1][1].player && table[0][2].player == table[2][0].player)
+        {
+            solution = table[0][2].player;
+        }
+        if (table[0][0].player == table[1][1].player && table[0][0].player == table[2][2].player)
+        {
+            solution = table[0][0].player;
         }
 
         return solution;

@@ -83,9 +83,9 @@ void Engine::Render()
     SDL_RenderClear(m_Renderer);
 
     // SDL_RenderDrawRects
-    for (size_t row = 0; row < N; row++)
+    for (int row = 0; row < N; row++)
     {
-        for (size_t col = 0; col < N; col++)
+        for (int col = 0; col < N; col++)
         {
             if (board.table[row][col].player == 1)
             {
