@@ -1,9 +1,9 @@
 #include "engine.h"
 #include "variables.h"
-#include "board.h"
+#include "game.h"
 
 Engine *Engine::s_Instance = nullptr;
-Board board;
+Game game;
 
 bool Engine::Init()
 {
@@ -43,36 +43,41 @@ bool Engine::Init()
     return m_IsRunning = true;
 }
 
+void Engine::Events()
+{
+    // Handle events on queue
+    while (SDL_PollEvent(&m_Event) != 0)
+    {
+        if (m_Event.type == SDL_QUIT)
+        {
+            Quit();
+        }
+        if (m_Event.type == SDL_MOUSEBUTTONDOWN && m_GameOver == false)
+        {
+            SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
+            game.UpdateBoard(m_MousePos);
+        }
+        if (m_Event.key.keysym.sym == SDLK_r)
+        {
+            SDL_Log("Reset pressed");
+            game.resetBoard();
+            m_GameOver = false;
+        }
+    }
+}
+
 void Engine::Update()
 {
-    if (board.table[m_MousePos.y / CELL_HEIGHT][m_MousePos.x / CELL_WIDTH].player == 0)
-    {
-        board.table[m_MousePos.y / CELL_HEIGHT][m_MousePos.x / CELL_WIDTH].player = m_Player;
-        if (m_Player == 1)
-        {
-            m_Player = 2;
-        }
-        else
-        {
-            m_Player = 1;
-        }
-    }
-
-    // Debug, print out to console
-    for (auto row = 0; row < N; row++)
-    {
-        for (auto col = 0; col < N; col++)
-        {
-            std::cout << board.table[row][col].player << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
     // Check if we have a winner
-    if (board.Solution() > 0)
+    if (game.Solution() > 0 && m_GameOver == false)
     {
-        std::cout << "Player " << board.Solution() << " has won!" << std::endl;
-        Quit();
+        std::cout << "Player " << game.Solution() << " has won!" << std::endl;
+        m_GameOver = true;
+    }
+    else if (game.Solution() == -1 && m_GameOver == false)
+    {
+        std::cout << "DRAW!" << std::endl;
+        m_GameOver = true;
     }
 }
 
@@ -87,25 +92,15 @@ void Engine::Render()
     {
         for (int col = 0; col < N; col++)
         {
-            if (board.table[row][col].player == 1)
+            if (game.getPlayer(row, col) == STATE::PLAYER1)
             {
                 SDL_SetRenderDrawColor(m_Renderer, 0, 0, 255, 255);
-                SDL_Rect rect = {
-                    .x = CELL_WIDTH * col,
-                    .y = CELL_HEIGHT * row,
-                    .w = CELL_WIDTH,
-                    .h = CELL_HEIGHT};
-                SDL_RenderFillRect(m_Renderer, &rect);
+                SDL_RenderFillRect(m_Renderer, game.getRect(row, col));
             }
-            if (board.table[row][col].player == 2)
+            if (game.getPlayer(row, col) == STATE::PLAYER2)
             {
                 SDL_SetRenderDrawColor(m_Renderer, 0, 255, 0, 255);
-                SDL_Rect rect = {
-                    .x = CELL_WIDTH * col,
-                    .y = CELL_HEIGHT * row,
-                    .w = CELL_WIDTH,
-                    .h = CELL_HEIGHT};
-                SDL_RenderFillRect(m_Renderer, &rect);
+                SDL_RenderFillRect(m_Renderer, game.getRect(row, col));
             }
         }
     }
@@ -120,24 +115,6 @@ void Engine::Render()
 
     // Present render
     SDL_RenderPresent(m_Renderer);
-}
-
-void Engine::Events()
-{
-    // Handle events on queue
-    while (SDL_PollEvent(&m_Event) != 0)
-    {
-        if (m_Event.type == SDL_MOUSEBUTTONDOWN)
-        {
-            SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
-            Update();
-            // SDL_Log("X: %d, Y: %d", m_MousePos.x, m_MousePos.y);
-        }
-        if (m_Event.type == SDL_QUIT)
-        {
-            Quit();
-        }
-    }
 }
 
 bool Engine::Clean()

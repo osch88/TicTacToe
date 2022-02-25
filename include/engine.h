@@ -46,5 +46,5 @@ private:
 
     SDL_Point m_MousePos;
     SDL_Event m_Event;
-    int m_Player = 1;
+    bool m_GameOver = false;
 };
