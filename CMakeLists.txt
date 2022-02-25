@@ -11,5 +11,5 @@ set(SOURCE_FILES
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 include_directories(include)
 
-target_link_libraries(${PROJECT_NAME} SDL2main SDL2 SDL2_image)
+target_link_libraries(${PROJECT_NAME} SDL2main SDL2 SDL2_image SDL2_ttf)
 

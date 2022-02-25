@@ -17,6 +17,12 @@ bool Engine::Init()
         return false;
     }
 
+    if (TTF_Init() != 0)
+    {
+        SDL_Log("Failed to initialize TTF: %s", SDL_GetError());
+        return false;
+    }
+
     // Create Window
     m_Window = SDL_CreateWindow("TicTocToe",
                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -73,11 +79,13 @@ void Engine::Update()
     {
         std::cout << "Player " << game.Solution() << " has won!" << std::endl;
         m_GameOver = true;
+        m_OutputText = "We have a winner";
     }
     else if (game.Solution() == -1 && m_GameOver == false)
     {
         std::cout << "DRAW!" << std::endl;
         m_GameOver = true;
+        m_OutputText = "DRAW";
     }
 }
 
@@ -113,6 +121,23 @@ void Engine::Render()
         SDL_RenderDrawLine(m_Renderer, 0, CELL_HEIGHT * i, SCREEN_WIDTH, CELL_HEIGHT * i);
     }
 
+    // Font
+    if (m_GameOver)
+    {
+        TTF_Font *Sans = TTF_OpenFont("assets/font/Teko-Bold.ttf", 24);
+        SDL_Color White = {255, 255, 255};
+
+        m_SurfaceMessage = TTF_RenderText_Solid(Sans, m_OutputText.c_str(), White);
+        m_Message = SDL_CreateTextureFromSurface(m_Renderer, m_SurfaceMessage);
+
+        SDL_Rect Message_rect;
+        Message_rect.w = 300;
+        Message_rect.h = 100;
+        Message_rect.x = SCREEN_WIDTH / 2 - Message_rect.w / 2;
+        Message_rect.y = SCREEN_HEIGHT / 2 - Message_rect.h / 2;
+        SDL_RenderCopy(m_Renderer, m_Message, NULL, &Message_rect);
+    }
+
     // Present render
     SDL_RenderPresent(m_Renderer);
 }
@@ -121,6 +146,8 @@ bool Engine::Clean()
 {
     SDL_DestroyRenderer(m_Renderer);
     SDL_DestroyWindow(m_Window);
+    SDL_FreeSurface(m_SurfaceMessage);
+    SDL_DestroyTexture(m_Message);
     IMG_Quit();
     SDL_Quit();
 
