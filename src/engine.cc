@@ -54,7 +54,7 @@ void Engine::Events()
     // Handle events on queue
     while (SDL_PollEvent(&m_Event) != 0)
     {
-        if (m_Event.type == SDL_QUIT)
+        if (m_Event.type == SDL_QUIT || m_Event.key.keysym.sym == SDLK_q)
         {
             Quit();
         }
