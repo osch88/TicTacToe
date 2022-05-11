@@ -1,5 +1,5 @@
 # TicTacToe - SDL2
-A simple SDL2 game with the mean purpose of learning the SDL2 framework
+A simple SDL2 game with the main purpose of practising on the SDL2 framework
 
 ## Dependencies
 
